@@ -1,20 +1,33 @@
-import {Routes, Route, Link} from 'react-router-dom'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Events from './pages/Events'
-import EventDetails from './pages/EventDetails'
-import MyEvents from './pages/MyEvents'
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "./store/authSlice";
+import { Routes, Route, Link } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Events from "./pages/Events";
+import EventDetails from "./pages/EventDetails";
+import MyEvents from "./pages/MyEvents";
 
-import './App.css'
+import "./App.css";
 
-function App(){
+function App() {
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
   return (
     <div>
       <nav>
         <Link to="/events">Events</Link>
         <Link to="/my-events">My Events</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link>
+        {user ? (
+          <div>
+            <span>{user.name}</span>
+            <button onClick={() => dispatch(logout())}>Logout</button>
+          </ div>
+        ) : (
+          <div>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </ div>
+        )}
       </nav>
 
       <Routes>
@@ -26,7 +39,7 @@ function App(){
         <Route path="/register" element={<Register />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

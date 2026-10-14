@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../store/authSlice";
-import { useNavigate } from "react-router-dom";
+import { login } from "../store/authSlice";
+import { useNavigate, Link } from "react-router-dom";
 
-function Register() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState("");
@@ -24,12 +24,12 @@ function Register() {
       setFormError("All fields are required.");
       return;
     }
-    dispatch(register({ email: email.trim(), password }));
+    dispatch(login({ email, password }));
   }
 
   return (
     <div>
-      <h1>Register</h1>
+      <h1>Login</h1>
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -58,13 +58,13 @@ function Register() {
 
         {error && <p className="error">{error}</p>}
 
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
       </form>
       <p>
-        Already have an account? <Link to="/login">Login</Link>
+        Don't have an account? <Link to="/register">Register</Link>
       </p>
     </div>
   );
 }
 
-export default Register;
+export default Login;
