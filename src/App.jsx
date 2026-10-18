@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import MyEvents from "./pages/MyEvents";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
 
@@ -34,9 +36,17 @@ function App() {
         <Route path="/" element={<Events />} />
         <Route path="/events" element={<Events />} />
         <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/my-events" element={<MyEvents />} />
+        <Route
+          path="/my-events"
+          element={
+            <ProtectedRoute>
+              <MyEvents />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );

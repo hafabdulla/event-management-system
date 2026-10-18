@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, clearError } from "../store/authSlice";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { validateEmail } from "../utils/validation";
 
 function Login() {
@@ -11,6 +11,9 @@ function Login() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from;
+  const redirectTo = from ? from.pathname + from.search : "/events";
   const error = useSelector((state) => state.auth.error);
   const user = useSelector((state) => state.auth.user);
 
@@ -20,8 +23,8 @@ function Login() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user) navigate("/events");
-  }, [user, navigate]);
+    if (user) navigate(redirectTo, { replace: true });
+  }, [user, navigate, redirectTo]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -40,6 +43,7 @@ function Login() {
   return (
     <div>
       <h1>Login</h1>
+      {from && <p>Please log in to continue.</p>}
 
       <form onSubmit={handleSubmit} noValidate>
         <div>
@@ -71,7 +75,7 @@ function Login() {
         <button type="submit">Login</button>
       </form>
       <p>
-        Don't have an account? <Link to="/register">Register</Link>
+        Don't have an account? <Link to="/register" state={location.state}>Register</Link>
       </p>
     </div>
   );

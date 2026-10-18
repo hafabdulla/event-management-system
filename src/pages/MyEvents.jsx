@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import EventCard from "../components/EventCard";
 import { cancelRegistration } from "../store/registrationsSlice";
 
@@ -12,18 +11,7 @@ function MyEvents() {
     const user = useSelector((s) => s.auth.user);
     const items = useSelector((s) => s.registrations.items);
 
-    if (!user) {
-        return (
-            <main className="events-page">
-                <h1>My Events</h1>
-                <p className="events-message">
-                    Please log in to see your events. <Link to="/login">Log in</Link>
-                </p>
-            </main>
-        );
-    }
-
-    const mine = items.filter((r) => r.userId === user.id);
+    const mine = items.filter((r) => r.userId === user?.id);
 
     const today = getToday();
 const upcoming = mine.filter((r) => !r.date || r.date >= today);
