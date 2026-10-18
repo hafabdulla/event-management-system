@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchEventsById } from "../api/ticketmaster";
-
+import {
+  registerForEvent,
+  cancelRegistration,
+} from "../store/registrationsSlice";
+import { useDispatch, useSelector } from "react-redux";
 function EventDetails() {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { id } = useParams();
 
+  const dispatch = useDispatch();
+  const items = useSelector((s) => s.registrations.items);
+  const user  = useSelector((s) => s.auth.user);
+  const isRegistered = items.some(
+    (r) => r.userId === user?.id && r.eventId === event?.id,
+  );
   useEffect(() => {
     let cancelled = false;
     async function loadEventDetails() {
@@ -26,7 +36,9 @@ function EventDetails() {
       }
     }
     loadEventDetails();
-    return() => {cancelled = true}
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
   const venue = event?._embedded?.venues?.[0];
   const date = event?.dates?.start?.localDate;
@@ -41,6 +53,20 @@ function EventDetails() {
   ]
     .filter(Boolean)
     .join(", ");
+
+  function handleRegister() {
+    dispatch(
+      registerForEvent({
+        userId: user.id,
+        event: event,
+        date: date,
+      }),
+    );
+  }
+
+  function handleCancel() {
+    dispatch(cancelRegistration({ userId: user.id, eventId: event.id }));
+  }
 
   return (
     <main className="event-details-page">
@@ -105,6 +131,25 @@ function EventDetails() {
                 Buy tickets on Ticketmaster ↗
               </a>
             ) : null}
+            <div className="registration-box">
+              {!user ? (
+                <>
+                  <p>Log in to register</p>
+                  <Link to="/login">Log in</Link>
+                </>
+              ) : isRegistered ? (
+                <>
+                  <p className="registered-badge">✓ You're registered</p>
+                  <button type="button" className="cancel-button" onClick={handleCancel}>
+                    Cancel registration
+                  </button>
+                </>
+              ) : (
+                <button type="button" onClick={handleRegister}>
+                  Register
+                </button>
+              )}
+            </div>
           </div>
         </article>
       )}
