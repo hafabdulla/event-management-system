@@ -1,10 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import EventCard from "../components/EventCard";
 import { cancelRegistration } from "../store/registrationsSlice";
-
-function getToday() {
-    return new Date().toISOString().slice(0, 10);
-}
+import { isPastDate } from "../utils/dates";
 
 function MyEvents() {
     const dispatch = useDispatch();
@@ -13,11 +10,11 @@ function MyEvents() {
 
     const mine = items.filter((r) => r.userId === user?.id);
 
-    const today = getToday();
-const upcoming = mine.filter((r) => !r.date || r.date >= today);
-    const completed = mine.filter((r) => r.date && r.date < today);
+    // An event with no announced date can't be "completed", so it counts as upcoming.
+    const upcoming = mine.filter((r) => !isPastDate(r.date));
+    const completed = mine.filter((r) => isPastDate(r.date));
 
-    function renderList(list, emptyText) {
+    function renderList(list, emptyText, canCancel) {
         if (list.length === 0) {
             return <p className="events-message">{emptyText}</p>;
         }
@@ -26,17 +23,19 @@ const upcoming = mine.filter((r) => !r.date || r.date >= today);
                 {list.map((r) => (
                     <div className="my-event" key={r.eventId}>
                         <EventCard event={r.event} />
-                        <button
-                            type="button"
-                            className="cancel-button"
-                            onClick={() =>
-                                dispatch(
-                                    cancelRegistration({ userId: user.id, eventId: r.eventId })
-                                )
-                            }
-                        >
-                            Cancel registration
-                        </button>
+                        {canCancel && (
+                            <button
+                                type="button"
+                                className="cancel-button"
+                                onClick={() =>
+                                    dispatch(
+                                        cancelRegistration({ userId: user.id, eventId: r.eventId })
+                                    )
+                                }
+                            >
+                                Cancel registration
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>
@@ -49,12 +48,12 @@ const upcoming = mine.filter((r) => !r.date || r.date >= today);
 
             <section>
                 <h2>Upcoming events</h2>
-                {renderList(upcoming, "No upcoming events")}
+                {renderList(upcoming, "No upcoming events", true)}
             </section>
 
             <section>
                 <h2>Completed events</h2>
-                {renderList(completed, "No completed events")}
+                {renderList(completed, "No completed events", false)}
             </section>
         </main>
     );

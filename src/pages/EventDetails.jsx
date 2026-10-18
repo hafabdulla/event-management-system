@@ -6,6 +6,7 @@ import {
   cancelRegistration,
 } from "../store/registrationsSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { isPastDate } from "../utils/dates";
 function EventDetails() {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,7 @@ function EventDetails() {
   const category = event?.classifications?.[0]?.segment?.name;
   const image = event?.images?.[0]?.url;
   const priceRange = event?.priceRanges?.[0];
+  const isPast = isPastDate(date);
   const location = [
     venue?.city?.name,
     venue?.state?.stateCode || venue?.state?.name,
@@ -56,6 +58,7 @@ function EventDetails() {
     .join(", ");
 
   function handleRegister() {
+    if (isPast) return;
     dispatch(
       registerForEvent({
         userId: user.id,
@@ -133,7 +136,13 @@ function EventDetails() {
               </a>
             ) : null}
             <div className="registration-box">
-              {!user ? (
+              {isPast ? (
+                isRegistered ? (
+                  <p className="registered-badge">✓ You were registered for this event</p>
+                ) : (
+                  <p>This event has already taken place.</p>
+                )
+              ) : !user ? (
                 <>
                   <p>Log in to register</p>
                   <Link to="/login" state={{ from: routerLocation }}>Log in</Link>
