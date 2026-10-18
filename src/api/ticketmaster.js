@@ -6,7 +6,7 @@ async function request(
     params = {},
     notFoundMessage = 'Not found',
     networkMessage = 'Network error. Please check your connection and try again.'
-) {
+) { 
     const cleaned = Object.fromEntries(
         Object.entries(params).filter(([, value]) => value !== '' && value != null)
     );
