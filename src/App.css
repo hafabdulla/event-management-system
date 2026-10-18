@@ -3,7 +3,7 @@ nav {
   align-items: center;
   gap: 20px;
   padding: 16px 0px;
-  border-bottom: 1px solid var(--border)
+  border-bottom: 1px solid var(--border);
 }
 
 nav > div{
@@ -46,11 +46,6 @@ nav > div{
   }
 }
 
-@media (max-width: 640px) {
-  .event-filters {
-    flex-direction: column;
-  }
-}
 
 .event-card-body {
   padding: 12px 14px 16px;
