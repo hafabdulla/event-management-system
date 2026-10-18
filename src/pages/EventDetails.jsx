@@ -32,9 +32,9 @@ function EventDetails() {
           setEvent(data);
         }
       } catch (err) {
-        setError(err.message);
+        if (!cancelled) setError(err.message);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     loadEventDetails();
