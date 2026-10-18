@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { fetchEventsById } from "../api/ticketmaster";
 import {
   registerForEvent,
@@ -11,6 +11,7 @@ function EventDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { id } = useParams();
+  const routerLocation = useLocation();
 
   const dispatch = useDispatch();
   const items = useSelector((s) => s.registrations.items);
@@ -135,7 +136,7 @@ function EventDetails() {
               {!user ? (
                 <>
                   <p>Log in to register</p>
-                  <Link to="/login">Log in</Link>
+                  <Link to="/login" state={{ from: routerLocation }}>Log in</Link>
                 </>
               ) : isRegistered ? (
                 <>

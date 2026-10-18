@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register, clearError } from "../store/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   validateName,
   validateEmail,
@@ -18,6 +18,9 @@ function Register() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from;
+  const redirectTo = from ? from.pathname + from.search : "/events";
   const error = useSelector((state) => state.auth.error);
   const user = useSelector((state) => state.auth.user);
 
@@ -27,8 +30,8 @@ function Register() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user) navigate("/events");
-  }, [user, navigate]);
+    if (user) navigate(redirectTo, { replace: true });
+  }, [user, navigate, redirectTo]);
 
   function handleSubmit(e) {
     e.preventDefault();
