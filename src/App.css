@@ -249,3 +249,45 @@ form button[type="submit"] {
   margin-bottom: 16px;
   text-align: left;
 }
+
+/* ---- Colours and links ---- */
+:root {
+  --accent: #2563eb;
+  --accent-bg: rgba(37, 99, 235, 0.1);
+  --accent-border: rgba(37, 99, 235, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #60a5fa;
+    --accent-bg: rgba(96, 165, 250, 0.15);
+    --accent-border: rgba(96, 165, 250, 0.5);
+  }
+}
+
+nav a {
+  padding: 4px 2px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-h);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
+}
+
+p a,
+.registration-box a,
+.back-link {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
