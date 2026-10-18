@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchEvents } from "../api/ticketmaster";
 import EventCard from "../components/EventCard";
 
-const categories = ["Music", "Sports", "Arts and Theatre", "Film", "Miscellaneous"]
+const categories = ["Music", "Sports", "Arts & Theatre", "Film", "Miscellaneous"]
 
 function Events() {
   const [events, setEvents] = useState([]);
