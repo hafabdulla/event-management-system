@@ -36,7 +36,7 @@ Vite 8 needs Node.js **20.19+** or **22.12+**.
 2. **Clone the repository and install dependencies.**
 
    ```bash
-   https://github.com/hafabdulla/event-management-system.git
+   git clone https://github.com/hafabdulla/event-management-system.git
    cd event-management-system
    npm install
    ```
