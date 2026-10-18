@@ -1,18 +1,30 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../store/authSlice";
+import { register, clearError } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
+import {
+  validateName,
+  validateEmail,
+  validateNewPassword,
+  validateConfirmPassword,
+} from "../utils/validation";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [formError, setFormError] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector((state) => state.auth.error);
   const user = useSelector((state) => state.auth.user);
+
+  // Don't show an error left over from another page (e.g. a failed Login).
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   useEffect(() => {
     if (user) navigate("/events");
@@ -20,11 +32,21 @@ function Register() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setFormError("");
-    if (!name.trim() || !email.trim() || !password) {
-      setFormError("All fields are required.");
-      return;
-    }
+
+    const found = {
+      name: validateName(name),
+      email: validateEmail(email),
+      password: validateNewPassword(password),
+      confirm: validateConfirmPassword(password, confirm),
+    };
+    // keep only the fields that actually have a message
+    const newErrors = Object.fromEntries(
+      Object.entries(found).filter(([, message]) => message)
+    );
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
     dispatch(register({ name, email, password }));
   }
 
@@ -32,7 +54,7 @@ function Register() {
     <div>
       <h1>Register</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div>
           <label htmlFor="name">Name</label>
           <input
@@ -40,8 +62,9 @@ function Register() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
+            aria-invalid={Boolean(errors.name)}
           />
+          {errors.name && <p className="error">{errors.name}</p>}
         </div>
 
         <div>
@@ -51,8 +74,9 @@ function Register() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
+            aria-invalid={Boolean(errors.email)}
           />
+          {errors.email && <p className="error">{errors.email}</p>}
         </div>
 
         <div>
@@ -62,11 +86,22 @@ function Register() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            aria-invalid={Boolean(errors.password)}
           />
+          {errors.password && <p className="error">{errors.password}</p>}
         </div>
 
-        {formError && <p className="error">{formError}</p>}
+        <div>
+          <label htmlFor="confirm">Confirm password</label>
+          <input
+            id="confirm"
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            aria-invalid={Boolean(errors.confirm)}
+          />
+          {errors.confirm && <p className="error">{errors.confirm}</p>}
+        </div>
 
         {error && <p className="error">{error}</p>}
 
